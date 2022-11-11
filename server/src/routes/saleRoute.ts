@@ -64,7 +64,9 @@ export async function saleRoutes(fastify: FastifyInstance) {
       count_itens: z.number(),
     });
 
-    const { consumerId } = createSaleBody.parse(request.body);
+    const { consumerId, sum_total, count_itens } = createSaleBody.parse(
+      request.body
+    );
 
     const consumerExists = await prisma.consumer.findUnique({
       where: {
@@ -79,20 +81,22 @@ export async function saleRoutes(fastify: FastifyInstance) {
     const generate = new ShortUniqueId({ length: 6 });
     const code = String(generate()).toUpperCase();
 
-    const sum_total = () => {
-      return 1;
-    };
-    const count_itens = () => {
-      return 1;
-    };
+    // const sum_total = () => {
+    //   return 1;
+    // };
+    // const count_itens = () => {
+    //   return 1;
+    // };
 
     await prisma.sale.create({
       data: {
         code,
         consumerId,
+        sum_total,
+        count_itens,
       },
     });
 
-    return reply.status(201).send({ name, code, salePrice });
+    return reply.status(201).send({ code });
   });
 }

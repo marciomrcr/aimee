@@ -31,19 +31,19 @@ model User {
 }
 
 model Consumer {
-  id           String         @id @default(cuid())
-  name         String
-  phone        String
-  whatsapp     String?
-  instagram    String?
-  facebook     String?
-  address      String?
-  city         String?
-  state        String?
-  observation  String?
-  zipcode      String?
-  createdAt    DateTime       @default(now())
-  sale_product Sale_Product[]
+  id          String   @id @default(cuid())
+  name        String
+  phone       String
+  whatsapp    String?
+  instagram   String?
+  facebook    String?
+  address     String?
+  city        String?
+  state       String?
+  observation String?
+  zipcode     String?
+  createdAt   DateTime @default(now())
+  Sale        Sale[]
 }
 
 model Supplier {
@@ -115,7 +115,7 @@ model stock_Movement {
   code        String    @unique
   productId   String
   amount      Int       @default(1)
-  entry_date  DateTime
+  entry_date  DateTime  @default(now())
   output_date DateTime?
 
   product Product @relation(fields: [productId], references: [id])
@@ -124,27 +124,29 @@ model stock_Movement {
 model Sale {
   id          String   @id @default(cuid())
   code        String   @unique
+  consumerId  String
   sum_total   Int
   count_itens Int
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   sale_product Sale_Product[]
+
+  consumer Consumer @relation(fields: [consumerId], references: [id])
 }
 
 model Sale_Product {
-  saleId     String
-  consumerId String
-  productId  String
-  amount     Int
-  price      Int
-  subtotal   Int
+  id            String @id @default(cuid())
+  saleId        String
+  productId     String
+  amountProduct Int
+  priceSale     Int
+  subtotal      Int
 
-  consumer Consumer @relation(fields: [consumerId], references: [id])
-  sale     Sale     @relation(fields: [saleId], references: [id])
-  product  Product  @relation(fields: [productId], references: [id])
+  sale    Sale    @relation(fields: [saleId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
 
-  @@id([saleId, consumerId])
+  consumerId String?
 }
 
 model Purchase {
